@@ -16,6 +16,7 @@ namespace SpriteKind {
     export const crewmate4 = SpriteKind.create()
     export const crewmate5 = SpriteKind.create()
     export const crewmate6 = SpriteKind.create()
+    export const task = SpriteKind.create()
 }
 namespace StatusBarKind {
     export const taskscompleted = StatusBarKind.create()
@@ -1679,6 +1680,10 @@ sprites.onOverlap(SpriteKind.Imposter, SpriteKind.Crewmate, function (sprite, ot
         info.changeLifeBy(-1)
     }
 })
+statusbars.onStatusReached(StatusBarKind.taskscompleted, statusbars.StatusComparison.EQ, statusbars.ComparisonType.Fixed, 100, function (status) {
+    game.splash("Game over tasks completed!")
+    game.over(false, effects.dissolve)
+})
 sprites.onOverlap(SpriteKind.Imposter, SpriteKind.crewmate1, function (sprite, otherSprite) {
     if (controller.A.isPressed()) {
         animation.runImageAnimation(
@@ -2610,9 +2615,8 @@ sprites.onOverlap(SpriteKind.Imposter, SpriteKind.crewmate6, function (sprite, o
         info.changeLifeBy(-1)
     }
 })
-let statusbar: StatusBarSprite = null
 let mySprite: Sprite = null
-game.splash("Among us freeplay")
+game.splash("Among us Task edition")
 game.splash("how to play?", "B/Enter to vent A/Space to kill Menu to fart")
 info.setLife(7)
 mySprite = sprites.create(img`
@@ -2634,6 +2638,11 @@ mySprite = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Imposter)
 controller.moveSprite(mySprite)
+let statusbar = statusbars.create(20, 4, StatusBarKind.taskscompleted)
+statusbar.positionDirection(CollisionDirection.Top)
+statusbar.value = 0
+statusbar.setColor(7, 2)
+statusbar.max = 100
 let vent = sprites.create(img`
     f f f f f f f f f f f f f f f f 
     f b b b b b b b b b b b b b b f 
@@ -3008,5 +3017,5 @@ tiles.placeOnRandomTile(vent4, assets.tile`myTile1`)
 tiles.placeOnRandomTile(vent5, assets.tile`myTile1`)
 tiles.placeOnRandomTile(broken, assets.tile`myTile1`)
 game.onUpdateInterval(5000, function () {
-    statusbar = statusbars.create(20, 4, StatusBarKind.taskscompleted)
+    statusbar.value += 5
 })
